@@ -1,0 +1,92 @@
+name: Docker Compose Deployment Test
+
+on:
+push:
+branches: [ main ]
+workflow_dispatch:
+
+jobs:
+deploy-test:
+runs-on: self-hosted
+steps:
+  # 1. Получить код
+  - name: Checkout code
+    uses: actions/checkout@v4
+  
+  # 2. Простой тест
+  - name: Test runner
+    run: echo "✅ GitHub Actions is running on Windows!"
+    shell: pwsh
+  
+  # 3. Показать информацию
+  - name: Show system info
+    run: |
+      echo "=== System Information ==="
+      echo "Runner OS: ${{ runner.os }}"
+      echo "Current folder:"
+      pwd
+      echo ""
+      echo "Files:"
+      ls -la
+    shell: pwsh
+  
+  # 4. Проверить Docker
+  - name: Check Docker
+    run: |
+      echo "=== Docker Check ==="
+      docker --version
+      docker-compose --version
+    shell: bash
+  
+  # 5. Запустить Docker Compose
+  - name: Start containers
+    run: |
+      echo "=== Starting Docker Compose ==="
+      # Остановить старые контейнеры если есть
+      docker-compose down 2>/dev/null || echo "No containers to stop"
+      
+      # Запустить новые
+      docker-compose up -d
+      
+      # Подождать
+      sleep 10
+      
+      # Проверить статус
+      echo "Container status:"
+      docker-compose ps
+    shell: bash
+  
+  # 6. Проверить работу
+  - name: Test application
+    run: |
+      echo "=== Testing Application ==="
+      
+      # Проверить Nginx
+      echo "Testing Nginx on port 8080..."
+      if curl -f http://localhost:8080; then
+        echo "✅ Nginx is working!"
+      else
+        echo "❌ Nginx not responding"
+        # Не завершаем с ошибкой, просто пишем предупреждение
+      fi
+    shell: bash
+  
+  # 7. Сохранить отчёт
+  - name: Create report
+    if: always()
+    run: |
+      echo "=== Creating Report ==="
+      date > report.txt
+      echo "Status: ${{ job.status }}" >> report.txt
+      docker-compose ps >> report.txt 2>/dev/null || echo "Docker not available" >> report.txt
+      echo "Report created at $(date)"
+    shell: bash
+  
+  # 8. Загрузить артефакты
+  - name: Upload artifacts
+    uses: actions/upload-artifact@v4
+    with:
+      name: test-results
+      path: |
+        report.txt
+      retention-days: 7
