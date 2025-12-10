@@ -14,12 +14,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       
-      # 2. Simple test
+      # 2. Simple test - ИСПРАВЛЕНО: без shell или powershell
       - name: Test runner
         run: echo "GitHub Actions is running on Windows!"
-        shell: pwsh
       
-      # 3. Show system info
+      # 3. Show system info - ИСПРАВЛЕНО: powershell вместо pwsh
       - name: Show system info
         run: |
           echo "System Information"
@@ -29,9 +28,9 @@ jobs:
           echo ""
           echo "Files:"
           ls -la
-        shell: pwsh
+        shell: powershell
       
-      # 4. Check Docker
+      # 4. Check Docker - оставляем bash (Git Bash установлен)
       - name: Check Docker
         run: |
           echo "Docker Check"
@@ -39,7 +38,7 @@ jobs:
           docker-compose --version
         shell: bash
       
-      # 5. Start Docker Compose
+      # 5. Start Docker Compose - bash
       - name: Start containers
         run: |
           echo "Starting Docker Compose"
@@ -50,7 +49,7 @@ jobs:
           docker-compose ps
         shell: bash
       
-      # 6. Test application
+      # 6. Test application - bash
       - name: Test application
         run: |
           echo "Testing Application"
@@ -62,7 +61,7 @@ jobs:
           fi
         shell: bash
       
-      # 7. Create report
+      # 7. Create report - bash
       - name: Create report
         if: always()
         run: |
