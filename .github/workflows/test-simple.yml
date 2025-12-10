@@ -1,0 +1,29 @@
+name: Simple Test Workflow
+on: [workflow_dispatch]
+jobs:
+  test:
+    runs-on: self-hosted
+    steps:
+      # Шаг 1: Простейшая команда
+      - name: Step 1 - Hello
+        run: echo "Hello from GitHub Actions!"
+      
+      # Шаг 2: Проверка окружения
+      - name: Step 2 - Environment
+        run: |
+          echo "Current directory:"
+          pwd
+          echo ""
+          echo "Files:"
+          ls -la
+      
+      # Шаг 3: Создание файла
+      - name: Step 3 - Create file
+        run: |
+          echo "Creating test file..."
+          echo "Test completed successfully!" > result.txt
+          cat result.txt
+      
+      # Шаг 4: Успешное завершение
+      - name: Step 4 - Success
+        run: echo "✅ WORKFLOW COMPLETED SUCCESSFULLY!"
