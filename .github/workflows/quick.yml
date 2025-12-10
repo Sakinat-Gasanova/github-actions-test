@@ -1,0 +1,12 @@
+name: Quick Test - Must Work
+on: [workflow_dispatch]
+jobs:
+  quick:
+    runs-on: self-hosted
+    steps:
+      - name: Step 1
+        run: echo "Quick Test Started"
+      - name: Step 2
+        run: echo "Runner is responding"
+      - name: Step 3
+        run: echo "✅ Quick Test Completed Successfully"
